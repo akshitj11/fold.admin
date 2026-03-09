@@ -1,0 +1,37 @@
+/* Fold Admin — Global Styles */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg-base: #0a0a0a;
+  --bg-surface: #111111;
+  --bg-raised: #1a1a1a;
+  --bg-hover: #222222;
+  --border: #2a2a2a;
+  --border-subtle: #1f1f1f;
+  --text-primary: #fafafa;
+  --text-secondary: #a1a1aa;
+  --text-muted: #52525b;
+  --accent: #ffffff;
+  --accent-dim: rgba(255,255,255,0.06);
+  --success: #22c55e;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+  --info: #3b82f6;
+  --font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --radius: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+}
+
+html, body { background: var(--bg-base); color: var(--text-primary); font-family: var(--font); -webkit-font-smoothing: antialiased; }
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+/* Selection */
+::selection { background: rgba(255,255,255,0.15); }
+
+/* Transitions */
+*, *::before, *::after { transition-timing-function: cubic-bezier(0.4,0,0.2,1); }
