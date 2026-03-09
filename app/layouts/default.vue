@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { BarChart2, Bell, FileText, Film, HardDrive, LayoutDashboard, LogOut, Scroll, Server, Settings, Shield, TrendingUp, Users, Zap } from 'lucide-vue-next'
+import { BarChart2, Bell, FileText, Film, HardDrive, LayoutDashboard, LogOut, Menu, Scroll, Server, Settings, Shield, TrendingUp, Users, X, Zap } from 'lucide-vue-next'
 
 const route = useRoute()
 const { logout } = useAuth()
@@ -21,23 +21,34 @@ const nav = [
 ]
 
 function isActive(to: string) {
-  if (to === '/') return route.path === '/'
-  return route.path.startsWith(to)
 }
+
+const menuOpen = ref(false)
+function toggleMenu() { menuOpen.value = !menuOpen.value }
+function closeMenu() { menuOpen.value = false }
+
+// Close menu on route change
+watch(route, closeMenu, { deep: true })
 </script>
 
 <template>
-  <div class="shell">
+  <div class="shell" :class="{ 'menu-open': menuOpen }">
+    <!-- Mobile overlay -->
+    <div class="sidebar-overlay" @click="closeMenu"></div>
+
     <!-- Sidebar -->
     <aside class="sidebar">
       <div class="logo">
         <span class="logo-text">Fold</span>
         <span class="logo-badge">Admin</span>
+        <button class="mobile-close" @click="closeMenu">
+          <X :size="20" />
+        </button>
       </div>
 
       <nav class="nav">
         <NuxtLink v-for="item in nav" :key="item.to" :to="item.to" class="nav-item"
-          :class="{ active: isActive(item.to) }">
+          :class="{ active: isActive(item.to) }" @click="closeMenu">
           <component :is="item.icon" :size="16" />
           <span>{{ item.label }}</span>
         </NuxtLink>
@@ -51,6 +62,12 @@ function isActive(to: string) {
 
     <!-- Main content -->
     <main class="main">
+      <div class="mobile-header">
+        <button class="menu-btn" @click="toggleMenu">
+          <Menu :size="20" />
+        </button>
+        <span class="mobile-title">Fold Admin</span>
+      </div>
       <slot />
     </main>
   </div>
@@ -168,5 +185,88 @@ function isActive(to: string) {
   margin-left: 220px;
   min-height: 100vh;
   overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.mobile-header {
+  display: none;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 20px;
+  background: var(--bg-surface);
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 5;
+}
+
+.menu-btn {
+  background: none;
+  border: none;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 4px;
+}
+
+.mobile-title {
+  font-weight: 600;
+  color: var(--text-primary);
+  font-size: 16px;
+}
+
+.mobile-close {
+  display: none;
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  margin-left: auto;
+  padding: 4px;
+}
+
+.sidebar-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(2px);
+  z-index: 9;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s;
+}
+
+@media (max-width: 768px) {
+  .main {
+    margin-left: 0;
+  }
+
+  .mobile-header {
+    display: flex;
+  }
+
+  .mobile-close {
+    display: block;
+  }
+
+  .sidebar {
+    transform: translateX(-100%);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 4px 0 24px rgba(0, 0, 0, 0.5);
+  }
+
+  .menu-open .sidebar {
+    transform: translateX(0);
+  }
+
+  .menu-open .sidebar-overlay {
+    display: block;
+    opacity: 1;
+    pointer-events: auto;
+  }
 }
 </style>

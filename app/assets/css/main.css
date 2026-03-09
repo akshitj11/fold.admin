@@ -1,5 +1,11 @@
 /* Fold Admin — Global Styles */
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
 
 :root {
   --bg-base: #0a0a0a;
@@ -12,7 +18,7 @@
   --text-secondary: #a1a1aa;
   --text-muted: #52525b;
   --accent: #ffffff;
-  --accent-dim: rgba(255,255,255,0.06);
+  --accent-dim: rgba(255, 255, 255, 0.06);
   --success: #22c55e;
   --warning: #f59e0b;
   --danger: #ef4444;
@@ -23,15 +29,106 @@
   --radius-xl: 16px;
 }
 
-html, body { background: var(--bg-base); color: var(--text-primary); font-family: var(--font); -webkit-font-smoothing: antialiased; }
+html,
+body {
+  background: var(--bg-base);
+  color: var(--text-primary);
+  font-family: var(--font);
+  -webkit-font-smoothing: antialiased;
+}
 
 /* Scrollbar */
-::-webkit-scrollbar { width: 6px; height: 6px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 3px;
+}
 
 /* Selection */
-::selection { background: rgba(255,255,255,0.15); }
+::selection {
+  background: rgba(255, 255, 255, 0.15);
+}
 
 /* Transitions */
-*, *::before, *::after { transition-timing-function: cubic-bezier(0.4,0,0.2,1); }
+*,
+*::before,
+*::after {
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Global Mobile Responsiveness */
+@media (max-width: 768px) {
+
+  /* Common page wrappers */
+  .page {
+    padding: 20px 16px !important;
+  }
+
+  .page-header {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 12px !important;
+  }
+
+  .page-header-actions {
+    width: 100%;
+    justify-content: space-between;
+    gap: 8px;
+  }
+
+  /* Grids */
+  .stat-grid,
+  .grid,
+  .cards-grid {
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+  }
+
+  /* Tables and Inputs */
+  .search-input {
+    width: 100% !important;
+  }
+
+  .table-wrap,
+  .table-card {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    border-radius: var(--radius);
+    border-left: none;
+    border-right: none;
+  }
+
+  table {
+    min-width: 600px;
+  }
+
+  /* Flex layouts that should stack */
+  .flex-row {
+    flex-direction: column !important;
+  }
+
+  /* Forms */
+  .form-row {
+    flex-direction: column !important;
+    gap: 12px !important;
+  }
+
+  .form-footer {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 16px !important;
+  }
+
+  .btn.primary {
+    width: 100%;
+    justify-content: center;
+  }
+}
