@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { Activity, Film, Link2, TrendingUp, Users } from 'lucide-vue-next';
+import { Bar } from 'vue-chartjs';
 
 const { request } = useApi()
 
@@ -42,6 +43,26 @@ function fmt(n: number) {
   if (n >= 1000) return (n / 1000).toFixed(1) + 'K'
   return n.toString()
 }
+
+const chartData = computed(() => ({
+  labels: signups.value.map(r => r.date.slice(5)),
+  datasets: [{
+    label: 'Signups',
+    data: signups.value.map(r => r.count),
+    backgroundColor: '#3b82f6',
+    borderRadius: 4
+  }]
+}))
+
+const chartOpts = {
+  responsive: true,
+  maintainAspectRatio: false,
+  plugins: { legend: { display: false } },
+  scales: {
+    x: { grid: { display: false }, ticks: { color: '#a1a1aa', font: { size: 10 } } },
+    y: { border: { display: false }, grid: { color: '#1f1f1f' }, ticks: { color: '#a1a1aa', font: { size: 10 } } }
+  }
+}
 </script>
 
 <template>
@@ -79,23 +100,13 @@ function fmt(n: number) {
           <span class="chart-sub">Last {{ range }} days</span>
         </div>
         <div class="chart-bars" v-if="signups.length">
-          <div v-for="row in signups" :key="row.date" class="bar-col" :title="`${row.date}: ${row.count}`">
-            <div class="bar" :style="{ height: barHeight(row.count, signups) + '%' }"></div>
-            <span class="bar-label">{{ row.date.slice(5) }}</span>
-          </div>
+          <Bar :data="chartData" :options="chartOpts" />
         </div>
         <div v-else class="chart-empty">No data for this period</div>
       </div>
     </template>
   </div>
 </template>
-
-<script lang="ts">
-function barHeight(val: number, rows: any[]) {
-  const max = Math.max(...rows.map(r => r.count))
-  return max === 0 ? 0 : Math.max(4, Math.round((val / max) * 100))
-}
-</script>
 
 <style scoped>
 .page {
@@ -218,42 +229,8 @@ function barHeight(val: number, rows: any[]) {
 }
 
 .chart-bars {
-  display: flex;
-  align-items: flex-end;
-  gap: 3px;
-  height: 140px;
-  overflow-x: auto;
-}
-
-.bar-col {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 4px;
-  flex: 1;
-  min-width: 20px;
-  max-width: 36px;
-  height: 100%;
-  justify-content: flex-end;
-}
-
-.bar {
-  width: 100%;
-  background: var(--text-muted);
-  border-radius: 3px 3px 0 0;
-  min-height: 2px;
-  transition: background 0.2s;
-}
-
-.bar-col:hover .bar {
-  background: var(--text-primary);
-}
-
-.bar-label {
-  font-size: 9px;
-  color: var(--text-muted);
-  transform: rotate(-45deg);
-  white-space: nowrap;
+  height: 200px;
+  position: relative;
 }
 
 .chart-empty {

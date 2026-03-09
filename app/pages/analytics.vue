@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { Bar, Line } from 'vue-chartjs'
 const { request } = useApi()
 const range = ref(30)
 const signups = ref<any[]>([])
@@ -19,12 +20,29 @@ async function load() {
 onMounted(load)
 watch(range, load)
 
-function maxVal(rows: any[]) { return Math.max(...rows.map(r => r.count), 1) }
-function barH(val: number, rows: any[]) { return Math.max(4, Math.round((val / maxVal(rows)) * 100)) }
-
 const totalSignups = computed(() => signups.value.reduce((s, r) => s + r.count, 0))
 const totalActive = computed(() => active.value.reduce((s, r) => s + r.count, 0))
 const avgSignups = computed(() => signups.value.length ? Math.round(totalSignups.value / signups.value.length) : 0)
+
+const chartOpts = {
+  responsive: true,
+  maintainAspectRatio: false,
+  plugins: { legend: { display: false } },
+  scales: {
+    x: { grid: { display: false }, ticks: { color: '#a1a1aa', font: { size: 10 } } },
+    y: { border: { display: false }, grid: { color: '#1f1f1f' }, ticks: { color: '#a1a1aa', font: { size: 10 } } }
+  }
+}
+
+const signupsData = computed(() => ({
+  labels: signups.value.map(r => r.date.slice(5)),
+  datasets: [{ data: signups.value.map(r => r.count), backgroundColor: '#a1a1aa', borderRadius: 4 }]
+}))
+
+const activeData = computed(() => ({
+  labels: active.value.map(r => r.date.slice(5)),
+  datasets: [{ data: active.value.map(r => r.count), borderColor: '#3b82f6', backgroundColor: '#3b82f6', tension: 0.3 }]
+}))
 </script>
 
 <template>
@@ -35,8 +53,9 @@ const avgSignups = computed(() => signups.value.length ? Math.round(totalSignups
         <p class="page-sub">User growth and activity trends</p>
       </div>
       <div class="range-tabs">
-        <button v-for="d in [7, 30, 90]" :key="d" class="range-tab" :class="{ active: range === d }" @click="range = d">{{
-          d }}d</button>
+        <button v-for="d in [7, 30, 90]" :key="d" class="range-tab" :class="{ active: range === d }"
+          @click="range = d">{{
+            d }}d</button>
       </div>
     </div>
 
@@ -61,27 +80,19 @@ const avgSignups = computed(() => signups.value.length ? Math.round(totalSignups
       <!-- Signup chart -->
       <div class="chart-card">
         <div class="chart-header"><span class="chart-title">Daily Signups</span></div>
-        <div class="chart-bars">
-          <div v-for="row in signups" :key="row.date" class="bar-col" :title="`${row.date}: ${row.count}`">
-            <span class="bar-count">{{ row.count }}</span>
-            <div class="bar" :style="{ height: barH(row.count, signups) + '%' }"></div>
-            <span class="bar-label">{{ row.date.slice(5) }}</span>
-          </div>
+        <div class="chart-bars" v-if="signups.length">
+          <Bar :data="signupsData" :options="chartOpts" />
         </div>
-        <div v-if="!signups.length" class="chart-empty">No data</div>
+        <div v-else class="chart-empty">No data</div>
       </div>
 
       <!-- Active users chart -->
       <div class="chart-card">
         <div class="chart-header"><span class="chart-title">Daily Active Users</span></div>
-        <div class="chart-bars">
-          <div v-for="row in active" :key="row.date" class="bar-col" :title="`${row.date}: ${row.count}`">
-            <span class="bar-count">{{ row.count }}</span>
-            <div class="bar blue" :style="{ height: barH(row.count, active) + '%' }"></div>
-            <span class="bar-label">{{ row.date.slice(5) }}</span>
-          </div>
+        <div class="chart-bars" v-if="active.length">
+          <Line :data="activeData" :options="chartOpts" />
         </div>
-        <div v-if="!active.length" class="chart-empty">No data</div>
+        <div v-else class="chart-empty">No data</div>
       </div>
     </template>
   </div>
@@ -164,7 +175,6 @@ const avgSignups = computed(() => signups.value.length ? Math.round(totalSignups
 
 .stat-key {
   font-size: 12px;
-  color: var(--text-muted);
   font-weight: 500;
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -189,55 +199,8 @@ const avgSignups = computed(() => signups.value.length ? Math.round(totalSignups
 }
 
 .chart-bars {
-  display: flex;
-  align-items: flex-end;
-  gap: 2px;
-  height: 140px;
-  overflow-x: auto;
-}
-
-.bar-col {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 3px;
-  flex: 1;
-  min-width: 18px;
-  max-width: 32px;
-  height: 100%;
-  justify-content: flex-end;
-}
-
-.bar-count {
-  font-size: 9px;
-  color: var(--text-muted);
-}
-
-.bar {
-  width: 100%;
-  background: var(--text-muted);
-  border-radius: 3px 3px 0 0;
-  transition: background 0.2s;
-}
-
-.bar.blue {
-  background: #3b82f6;
-  opacity: 0.7;
-}
-
-.bar-col:hover .bar {
-  background: var(--text-primary);
-}
-
-.bar-col:hover .bar.blue {
-  opacity: 1;
-}
-
-.bar-label {
-  font-size: 9px;
-  color: var(--text-muted);
-  transform: rotate(-45deg);
-  white-space: nowrap;
+  height: 200px;
+  position: relative;
 }
 
 .chart-empty {

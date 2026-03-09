@@ -81,8 +81,8 @@ function fmtDate(d: string) { return new Date(d).toLocaleDateString('en-US', { m
           <input v-model="form.title" placeholder="Entry title" />
         </div>
         <div class="field">
-          <label>Content (HTML)</label>
-          <textarea v-model="form.content" rows="8" placeholder="<p>Your content here…</p>"></textarea>
+          <label>Content</label>
+          <RichEditor v-model="form.content" placeholder="Write your content here…" />
         </div>
         <div class="form-footer">
           <label class="toggle-label">
@@ -242,8 +242,7 @@ function fmtDate(d: string) { return new Date(d).toLocaleDateString('en-US', { m
 }
 
 .field input,
-.field select,
-.field textarea {
+.field select {
   background: var(--bg-raised);
   border: 1px solid var(--border);
   border-radius: var(--radius);
@@ -253,12 +252,10 @@ function fmtDate(d: string) { return new Date(d).toLocaleDateString('en-US', { m
   font-family: monospace;
   outline: none;
   transition: border-color 0.15s;
-  resize: vertical;
 }
 
 .field input:focus,
-.field select:focus,
-.field textarea:focus {
+.field select:focus {
   border-color: var(--text-muted);
 }
 

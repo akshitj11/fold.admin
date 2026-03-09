@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { Bar } from 'vue-chartjs'
 const { request } = useApi()
 const range = ref(30)
 const media = ref<any>(null)
@@ -14,8 +15,21 @@ onMounted(load)
 watch(range, load)
 
 const typeColors: Record<string, string> = { image: '#3b82f6', video: '#8b5cf6', audio: '#22c55e', text: '#f59e0b' }
-function maxVal(rows: any[]) { return Math.max(...rows.map(r => r.count), 1) }
-function barH(val: number, rows: any[]) { return Math.max(4, Math.round((val / maxVal(rows)) * 100)) }
+
+const chartOpts = {
+  responsive: true,
+  maintainAspectRatio: false,
+  plugins: { legend: { display: false } },
+  scales: {
+    x: { grid: { display: false }, ticks: { color: '#a1a1aa', font: { size: 10 } } },
+    y: { border: { display: false }, grid: { color: '#1f1f1f' }, ticks: { color: '#a1a1aa', font: { size: 10 } } }
+  }
+}
+
+const perDayData = computed(() => ({
+  labels: media.value?.perDay.map((r: any) => r.date.slice(5)) || [],
+  datasets: [{ data: media.value?.perDay.map((r: any) => r.count) || [], backgroundColor: '#a1a1aa', borderRadius: 4 }]
+}))
 </script>
 
 <template>
@@ -26,8 +40,9 @@ function barH(val: number, rows: any[]) { return Math.max(4, Math.round((val / m
         <p class="page-sub">Uploads and content breakdown</p>
       </div>
       <div class="range-tabs">
-        <button v-for="d in [7, 30, 90]" :key="d" class="range-tab" :class="{ active: range === d }" @click="range = d">{{
-          d }}d</button>
+        <button v-for="d in [7, 30, 90]" :key="d" class="range-tab" :class="{ active: range === d }"
+          @click="range = d">{{
+            d }}d</button>
       </div>
     </div>
 
@@ -70,13 +85,10 @@ function barH(val: number, rows: any[]) { return Math.max(4, Math.round((val / m
       <!-- Uploads per day chart -->
       <div class="chart-card">
         <div class="chart-header"><span class="chart-title">Entries per Day</span></div>
-        <div class="chart-bars">
-          <div v-for="row in media.perDay" :key="row.date" class="bar-col" :title="`${row.date}: ${row.count}`">
-            <div class="bar" :style="{ height: barH(row.count, media.perDay) + '%' }"></div>
-            <span class="bar-label">{{ row.date.slice(5) }}</span>
-          </div>
+        <div class="chart-bars" v-if="media.perDay?.length">
+          <Bar :data="perDayData" :options="chartOpts" />
         </div>
-        <div v-if="!media.perDay.length" class="chart-empty">No data</div>
+        <div v-else class="chart-empty">No data</div>
       </div>
     </template>
   </div>
@@ -219,41 +231,8 @@ function barH(val: number, rows: any[]) { return Math.max(4, Math.round((val / m
 }
 
 .chart-bars {
-  display: flex;
-  align-items: flex-end;
-  gap: 2px;
-  height: 120px;
-  overflow-x: auto;
-}
-
-.bar-col {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 3px;
-  flex: 1;
-  min-width: 18px;
-  max-width: 32px;
-  height: 100%;
-  justify-content: flex-end;
-}
-
-.bar {
-  width: 100%;
-  background: var(--text-muted);
-  border-radius: 3px 3px 0 0;
-  transition: background 0.2s;
-}
-
-.bar-col:hover .bar {
-  background: var(--text-primary);
-}
-
-.bar-label {
-  font-size: 9px;
-  color: var(--text-muted);
-  transform: rotate(-45deg);
-  white-space: nowrap;
+  height: 200px;
+  position: relative;
 }
 
 .chart-empty {

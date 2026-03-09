@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { Bar } from 'vue-chartjs'
 // Growth page — connection and user growth metrics
 const { request } = useApi()
 const range = ref(30)
@@ -19,8 +20,20 @@ async function load() {
 onMounted(load)
 watch(range, load)
 
-function maxVal(rows: any[]) { return Math.max(...rows.map(r => r.count), 1) }
-function barH(val: number, rows: any[]) { return Math.max(4, Math.round((val / maxVal(rows)) * 100)) }
+const chartOpts = {
+  responsive: true,
+  maintainAspectRatio: false,
+  plugins: { legend: { display: false } },
+  scales: {
+    x: { grid: { display: false }, ticks: { color: '#a1a1aa', font: { size: 10 } } },
+    y: { border: { display: false }, grid: { color: '#1f1f1f' }, ticks: { color: '#a1a1aa', font: { size: 10 } } }
+  }
+}
+
+const connData = computed(() => ({
+  labels: events.value?.connectionsPerDay.map((r: any) => r.date.slice(5)) || [],
+  datasets: [{ data: events.value?.connectionsPerDay.map((r: any) => r.count) || [], backgroundColor: '#ec4899', borderRadius: 4 }]
+}))
 </script>
 
 <template>
@@ -31,8 +44,9 @@ function barH(val: number, rows: any[]) { return Math.max(4, Math.round((val / m
         <p class="page-sub">Connections and network expansion metrics</p>
       </div>
       <div class="range-tabs">
-        <button v-for="d in [7, 30, 90]" :key="d" class="range-tab" :class="{ active: range === d }" @click="range = d">{{
-          d }}d</button>
+        <button v-for="d in [7, 30, 90]" :key="d" class="range-tab" :class="{ active: range === d }"
+          @click="range = d">{{
+            d }}d</button>
       </div>
     </div>
 
@@ -56,11 +70,7 @@ function barH(val: number, rows: any[]) { return Math.max(4, Math.round((val / m
       <div class="chart-card" v-if="events?.connectionsPerDay?.length">
         <div class="chart-header"><span class="chart-title">New Connections per Day</span></div>
         <div class="chart-bars">
-          <div v-for="row in events.connectionsPerDay" :key="row.date" class="bar-col"
-            :title="`${row.date}: ${row.count}`">
-            <div class="bar" :style="{ height: barH(row.count, events.connectionsPerDay) + '%' }"></div>
-            <span class="bar-label">{{ row.date.slice(5) }}</span>
-          </div>
+          <Bar :data="connData" :options="chartOpts" />
         </div>
       </div>
       <div v-else class="empty-state">No connection data for this period</div>
@@ -169,42 +179,8 @@ function barH(val: number, rows: any[]) { return Math.max(4, Math.round((val / m
 }
 
 .chart-bars {
-  display: flex;
-  align-items: flex-end;
-  gap: 2px;
-  height: 140px;
-  overflow-x: auto;
-}
-
-.bar-col {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 3px;
-  flex: 1;
-  min-width: 18px;
-  max-width: 32px;
-  height: 100%;
-  justify-content: flex-end;
-}
-
-.bar {
-  width: 100%;
-  background: #ec4899;
-  opacity: 0.7;
-  border-radius: 3px 3px 0 0;
-  transition: opacity 0.2s;
-}
-
-.bar-col:hover .bar {
-  opacity: 1;
-}
-
-.bar-label {
-  font-size: 9px;
-  color: var(--text-muted);
-  transform: rotate(-45deg);
-  white-space: nowrap;
+  height: 200px;
+  position: relative;
 }
 
 .empty-state {
