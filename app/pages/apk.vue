@@ -23,13 +23,13 @@ async function createRelease() {
   if (!form.value.version || !form.value.url) return
   sending.value = true
 
-  const { success } = await request('/apk', {
+  const { error } = await request('/apk', {
     method: 'POST',
-    body: form.value
+    body: JSON.stringify(form.value)
   })
 
   sending.value = false
-  if (success) {
+  if (!error) {
     msg.value = 'Release published!'
     form.value = { version: '', url: '', changeLog: '' }
     setTimeout(() => msg.value = '', 3000)
