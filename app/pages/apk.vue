@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Code, Link as LinkIcon, Plus, Trash2 } from 'lucide-vue-next'
+import { Code, ExternalLink, Link as LinkIcon, Plus, Trash2 } from 'lucide-vue-next'
 
 const { request } = useApi()
 
@@ -9,8 +9,12 @@ const sending = ref(false)
 const msg = ref('')
 
 const form = ref({ version: '', url: '', changeLog: '' })
+const shareUrl = ref('https://admin.fold.taohq.org/download')
 
 async function load() {
+  if (import.meta.client) {
+    shareUrl.value = window.location.origin + '/download'
+  }
   loading.value = true
   const { data } = await request<any[]>('/apk')
   if (data) releases.value = data
@@ -53,6 +57,10 @@ function fmtDate(d: string) { return new Date(d).toLocaleString() }
         <h1 class="page-title">Share APK</h1>
         <p class="page-sub">Publish direct download links for Android users</p>
       </div>
+      <a :href="shareUrl" target="_blank" class="share-btn">
+        <ExternalLink :size="14" />
+        Open Public Share Page
+      </a>
     </div>
 
     <div v-if="msg" class="success-toast">{{ msg }}</div>
@@ -126,6 +134,9 @@ function fmtDate(d: string) { return new Date(d).toLocaleString() }
 }
 
 .page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   margin-bottom: 24px;
 }
 
@@ -139,6 +150,25 @@ function fmtDate(d: string) { return new Date(d).toLocaleString() }
   font-size: 13px;
   color: var(--text-muted);
   margin-top: 2px;
+}
+
+.share-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text-primary);
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background 0.15s;
+}
+
+.share-btn:hover {
+  background: var(--bg-raised);
 }
 
 .success-toast {
