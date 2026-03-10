@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { BarChart2, Bell, FileText, Film, HardDrive, LayoutDashboard, LogOut, Menu, Scroll, Server, Settings, Shield, TrendingUp, Users, X, Zap } from 'lucide-vue-next'
+import { BarChart2, Bell, FileText, Film, HardDrive, LayoutDashboard, LogOut, Menu, Scroll, Server, Settings, Shield, Smartphone, TrendingUp, Users, X, Zap } from 'lucide-vue-next'
 
 const route = useRoute()
 const { logout } = useAuth()
@@ -10,6 +10,7 @@ const nav = [
   { label: 'Analytics', icon: BarChart2, to: '/analytics' },
   { label: 'Media', icon: Film, to: '/media' },
   { label: 'Notifications', icon: Bell, to: '/notifications' },
+  { label: 'Share APK', icon: Smartphone, to: '/apk' },
   { label: 'CMS', icon: FileText, to: '/cms' },
   { label: 'Growth', icon: TrendingUp, to: '/growth' },
   { label: 'Events', icon: Zap, to: '/events' },
