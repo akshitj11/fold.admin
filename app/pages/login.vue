@@ -13,7 +13,7 @@ async function handleLogin() {
   if (!username.value || !password.value) return
   loading.value = true
   error.value = ''
-  const err = await login(username.value, password.value)
+  const err = await login(username.value.trim(), password.value.trim())
   loading.value = false
   if (err) { error.value = err; return }
   router.push('/')
