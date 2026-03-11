@@ -9,13 +9,10 @@ const error = ref('')
 const release = ref<any>(null)
 const loading = ref(true)
 
-// URL of this exact download page so desktop users can scan it and open it on their phone
-const thisPageUrl = ref('https://admin.fold.taohq.org/download')
+// URL for QR code — points directly to the APK download URL for easy sharing
+const qrUrl = computed(() => release.value?.url || '')
 
 onMounted(async () => {
-  // In browser, set actual window URL for accurate QR Code
-  thisPageUrl.value = window.location.href
-
   try {
     const res = await fetch(`${config.public.apiUrl}/api/public/apk/latest`)
     const json = await res.json()
@@ -63,11 +60,11 @@ onMounted(async () => {
           <p>{{ release.changeLog }}</p>
         </div>
 
-        <!-- Desktop QR Code -->
-        <div class="desktop-only qr-section">
-          <p class="qr-text">Or scan with your phone to download</p>
+        <!-- QR Code (shown on all screens, points to direct APK URL) -->
+        <div class="qr-section" v-if="release?.url">
+          <p class="qr-text">Scan to download directly</p>
           <div class="qr-code">
-            <QrcodeVue :value="thisPageUrl" :size="160" level="H" background="#ffffff" foreground="#0a0a0a" />
+            <QrcodeVue :value="qrUrl" :size="160" level="H" background="#ffffff" foreground="#0a0a0a" />
           </div>
         </div>
       </div>
@@ -213,12 +210,8 @@ onMounted(async () => {
   display: inline-block;
 }
 
-/* Hide QR code on small screens */
+/* QR code visible on all screens */
 @media (max-width: 640px) {
-  .desktop-only {
-    display: none;
-  }
-
   .glass-card {
     padding: 32px 24px;
     border: none;
