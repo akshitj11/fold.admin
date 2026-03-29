@@ -10,12 +10,14 @@ export default function App() {
   return (
     <Routes>
       <Route element={<AdminLayout />}>
-        <Route path="/" element={<OverviewPage />} />
+        <Route path="/" element={<Navigate to="/overview" replace />} />
+        <Route path="/overview" element={<OverviewPage />} />
         <Route path="/users" element={<UsersPage />} />
         <Route path="/paymaster" element={<PaymasterPage />} />
         <Route path="/contracts" element={<ContractsPage />} />
-        <Route path="/shared-memories" element={<SharedMemoriesPage />} />
-        <Route path="*" element={<Navigate to="/" replace />} />
+        <Route path="/shares" element={<SharedMemoriesPage />} />
+        <Route path="/shared-memories" element={<Navigate to="/shares" replace />} />
+        <Route path="*" element={<Navigate to="/overview" replace />} />
       </Route>
     </Routes>
   );

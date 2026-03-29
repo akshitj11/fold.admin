@@ -14,11 +14,10 @@ async function request<T>(path: string): Promise<ApiResult<T>> {
     });
 
     if (!response.ok) {
-      if (response.status >= 500) setConnectionStatus(false);
       return {
         data: null,
         error: `Request failed with status ${response.status}`,
-        networkError: response.status >= 500,
+        networkError: false,
       };
     }
 

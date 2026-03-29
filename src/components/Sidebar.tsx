@@ -1,11 +1,11 @@
 import { NavLink } from "react-router-dom";
 
 const links = [
-  { to: "/", label: "Overview" },
+  { to: "/overview", label: "Overview" },
   { to: "/users", label: "Users" },
   { to: "/paymaster", label: "Paymaster" },
   { to: "/contracts", label: "Contracts" },
-  { to: "/shared-memories", label: "Shared Memories" },
+  { to: "/shares", label: "Shares" },
 ];
 
 export function Sidebar() {
@@ -20,7 +20,6 @@ export function Sidebar() {
           <NavLink
             key={link.to}
             to={link.to}
-            end={link.to === "/"}
             className={({ isActive }) =>
               `block rounded px-3 py-2 text-sm ${isActive ? "bg-slate-800 text-white" : "text-slate-300 hover:bg-slate-900"}`
             }
