@@ -35,7 +35,7 @@ export function SharedMemoriesPage() {
 
   return (
     <div className="space-y-6">
-      <h2 className="text-2xl font-semibold text-slate-900">Shared Memories</h2>
+      <h2 className="text-2xl font-semibold text-slate-900">Shares</h2>
 
       <div className="overflow-x-auto rounded border border-slate-200 bg-white">
         <table className="min-w-full divide-y divide-slate-200 text-sm">

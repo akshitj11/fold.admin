@@ -10,6 +10,7 @@ const contracts = [
 export function ContractsPage() {
   const network = import.meta.env.VITE_NETWORK || "testnet";
   const networkLabel = network === "mainnet" ? "Polygon Mainnet" : "Polygon Amoy Testnet";
+  const explorerBaseUrl = network === "mainnet" ? "https://polygonscan.com/address" : "https://amoy.polygonscan.com/address";
 
   const rows = useMemo(
     () =>
@@ -18,10 +19,10 @@ export function ContractsPage() {
         return {
           ...contract,
           address,
-          link: address ? `https://amoy.polygonscan.com/address/${address}` : "",
+          link: address ? `${explorerBaseUrl}/${address}` : "",
         };
       }),
-    [],
+    [explorerBaseUrl],
   );
 
   return (

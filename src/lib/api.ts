@@ -14,10 +14,11 @@ async function request<T>(path: string): Promise<ApiResult<T>> {
     });
 
     if (!response.ok) {
+      setConnectionStatus(false);
       return {
         data: null,
         error: `Request failed with status ${response.status}`,
-        networkError: false,
+        networkError: true,
       };
     }
 
